@@ -100,6 +100,7 @@ public class server implements ActionListener,Runnable {
 				outstream.flush();
 				showText.append("服务端  "+inText.getText()+"\n");
 				inText.setText(null);
+				System.out.println("A");
 			} catch (IOException e1) {
 				showText.append("你的消息"+inText.getText()+"未能发送"+"\n");
 			}
