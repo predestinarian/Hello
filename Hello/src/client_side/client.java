@@ -17,122 +17,123 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 public class client implements ActionListener,Runnable {
-	//ÏÔÊ¾¶Ô»°ÄÚÈİ
+	//æ˜¾ç¤ºå¯¹è¯å†…å®¹
 	JTextArea showText;
-	//Ö÷¿ò¼Ü
+	//ä¸»æ¡†æ¶
 	JFrame mainjframe;                                                                                                                                                                                                                                                                                                                                                                                                           
-	//Ïß³Ì
+	//çº¿ç¨‹
 	Thread thread=null;
-	//ÊäÈëÎÄ±¾¿ò
+	//è¾“å…¥æ–‡æœ¬æ¡†
 	JTextField inText;
-	//·¢ËÍ°´Å¥
+	//å‘é€æŒ‰é’®
 	JButton sendbtn;
-	//Êä³öÁ÷
+	//è¾“å‡ºæµ
 	DataOutputStream outstream;
-	//ÊäÈëÁ÷
+	//è¾“å…¥æµ
 	DataInputStream instream;
-	//Ì×½Ó×Ö
+	//å¥—æ¥å­—
 	Socket socket;
-	//´°¿ÚÈİÆ÷
+	//çª—å£å®¹å™¨
 	Container con;
-	//´°¿Ú¹ö¶¯Ìõ×é¼ş  
+	//çª—å£æ»šåŠ¨æ¡ç»„ä»¶  
 	JScrollPane jsPane;
-	//´°Ìå»­²¼
+	//çª—ä½“ç”»å¸ƒ
 	JPanel jpanel;
 	public client(){
-		//´´½¨Ö÷´°Ìå
+		//åˆ›å»ºä¸»çª—ä½“
 		mainjframe=new JFrame();
-		//½«´°Ìå·Å½øÈİÆ÷
+		//å°†çª—ä½“æ”¾è¿›å®¹å™¨
 		con=mainjframe.getContentPane();
-		showText=new JTextArea();//´´½¨ÊäÈëÎÄ±¾Óò
+		showText=new JTextArea();//åˆ›å»ºè¾“å…¥æ–‡æœ¬åŸŸ
 		/*setEditable(true,false)
-		 * ÉèÖÃswing×é¼şµÄ¿ÉÓÃÓë²»¿ÉÓÃ
-		 * ÏÔÊ¾ÎÄ±¾¿ò²»¿ÉÓÃ
-		 * ¼´£¬Ö»ÄÜÏÔÊ¾ÎÄ±¾£¬²»ÄÜÌí¼ÓÎÄ±¾ÄÚÈİ¡£
+		 * è®¾ç½®swingç»„ä»¶çš„å¯ç”¨ä¸ä¸å¯ç”¨
+		 * æ˜¾ç¤ºæ–‡æœ¬æ¡†ä¸å¯ç”¨
+		 * å³ï¼Œåªèƒ½æ˜¾ç¤ºæ–‡æœ¬ï¼Œä¸èƒ½æ·»åŠ æ–‡æœ¬å†…å®¹ã€‚
 		 */
 		showText.setEditable(false);
-		/*ÉèÖÃÎÄ±¾µÄ»»ĞĞ ,ÖµÎªboolean
-		 * trueÎª»»ĞĞ£¬falseÎª²»»»ĞĞ
+		/*è®¾ç½®æ–‡æœ¬çš„æ¢è¡Œ ,å€¼ä¸ºboolean
+		 * trueä¸ºæ¢è¡Œï¼Œfalseä¸ºä¸æ¢è¡Œ
 		 */
 		showText.setLineWrap(true);
-		jsPane=new JScrollPane(showText);//´´½¨ÏÔÊ¾ÎÄ±¾µÄ¹ö¶¯Ãæ°å
-		inText=new JTextField();//´´½¨ÏÔÊ¾ÎÄ±¾Óò
+		jsPane=new JScrollPane(showText);//åˆ›å»ºæ˜¾ç¤ºæ–‡æœ¬çš„æ»šåŠ¨é¢æ¿
+		inText=new JTextField();//åˆ›å»ºæ˜¾ç¤ºæ–‡æœ¬åŸŸ
 		/*
-		 * ÉèÖÃÏÔÊ¾ÎÄ±¾ÁĞÊı£¬²ÎÊıÎª¾ßÌåµÄintÖµ
-		 * ±íÊ¾¾ßÌåµÄÁĞÊı
+		 * è®¾ç½®æ˜¾ç¤ºæ–‡æœ¬åˆ—æ•°ï¼Œå‚æ•°ä¸ºå…·ä½“çš„intå€¼
+		 * è¡¨ç¤ºå…·ä½“çš„åˆ—æ•°
 		 */
 		inText.setColumns(30);
-		/*Ìí¼ÓÖ¸¶¨µÄÕìÌıÆ÷
-		 * ÒÔ´Ó´ËÎÄ±¾×Ö¶Î½ÓÊÕ²Ù×÷ÊÂ¼ş  
+		/*æ·»åŠ æŒ‡å®šçš„ä¾¦å¬å™¨
+		 * ä»¥ä»æ­¤æ–‡æœ¬å­—æ®µæ¥æ”¶æ“ä½œäº‹ä»¶  
 		 */
 		inText.addActionListener(this);
-		sendbtn=new JButton("·¢ËÍ");//´´½¨·¢ËÍ°´Å¥
+		sendbtn=new JButton("å‘é€");//åˆ›å»ºå‘é€æŒ‰é’®
 		sendbtn.addActionListener(this);
-		jpanel=new JPanel();//´´½¨Ãæ°å
+		jpanel=new JPanel();//åˆ›å»ºé¢æ¿
 		jpanel.setLayout(new FlowLayout());
-		//½«·¢ËÍ°´Å¥ºÍÊäÈë¿ò·Å½ø»­°åÀïÃæ
+		//å°†å‘é€æŒ‰é’®å’Œè¾“å…¥æ¡†æ”¾è¿›ç”»æ¿é‡Œé¢
 		jpanel.add(inText);
 		jpanel.add(sendbtn);
-		//½«¹ö¶¯×é¼şºÍ»­°å·Å½ø´°ÌåÈİÆ÷ÀïÃæ
+		//å°†æ»šåŠ¨ç»„ä»¶å’Œç”»æ¿æ”¾è¿›çª—ä½“å®¹å™¨é‡Œé¢
 		/*
-		 * BorderLayoutÀà±íÊ¾²¼ÖÃÈİÆ÷µÄ±ß¿ò²¼¾Ö£¬Ëü¿ÉÒÔ¶ÔÈİÆ÷×é¼ş½øĞĞ°²ÅÅ£¬²¢µ÷ÕûÆä´óĞ¡£¬
-		 * Ê¹Æä·ûºÏÏÂÁĞÎå¸öÇøÓò£º±±¡¢ÄÏ¡¢¶«¡¢Î÷¡¢ÖĞ¡£Ã¿¸öÇøÓò×î¶àÖ»ÄÜ°üº¬Ò»¸ö×é¼ş£¬
-		 * ²¢Í¨¹ıÏàÓ¦µÄ³£Á¿½øĞĞ±êÊ¶£ºNORTH¡¢SOUTH¡¢EAST¡¢WEST¡¢CENTER¡£
-		 * µ±Ê¹ÓÃ±ß¿ò²¼¾Ö½«Ò»¸ö×é¼şÌí¼Óµ½ÈİÆ÷ÖĞÊ±£¬ÒªÊ¹ÓÃÕâÎå¸ö³£Á¿Ö®Ò»£¬
-		 * NORTH±íÊ¾±±ÇøÓòµÄ²¼¾ÖÔ¼Êø£¬SOUTH±íÊ¾ÄÏÇøÓòµÄ²¼¾ÖÔ¼Êø
-		 * EAST±íÊ¾¶«ÇøÓòµÄ²¼¾ÖÔ¼Êø£¬WEST±íÊ¾Î÷ÇøÓòµÄ²¼¾ÖÔ¼Êø£¬CENTER±íÊ¾ÖĞÑëÇøÓòµÄ²¼¾ÖÔ¼Êø
+		 * BorderLayoutç±»è¡¨ç¤ºå¸ƒç½®å®¹å™¨çš„è¾¹æ¡†å¸ƒå±€ï¼Œå®ƒå¯ä»¥å¯¹å®¹å™¨ç»„ä»¶è¿›è¡Œå®‰æ’ï¼Œå¹¶è°ƒæ•´å…¶å¤§å°ï¼Œ
+		 * ä½¿å…¶ç¬¦åˆä¸‹åˆ—äº”ä¸ªåŒºåŸŸï¼šåŒ—ã€å—ã€ä¸œã€è¥¿ã€ä¸­ã€‚æ¯ä¸ªåŒºåŸŸæœ€å¤šåªèƒ½åŒ…å«ä¸€ä¸ªç»„ä»¶ï¼Œ
+		 * å¹¶é€šè¿‡ç›¸åº”çš„å¸¸é‡è¿›è¡Œæ ‡è¯†ï¼šNORTHã€SOUTHã€EASTã€WESTã€CENTERã€‚
+		 * å½“ä½¿ç”¨è¾¹æ¡†å¸ƒå±€å°†ä¸€ä¸ªç»„ä»¶æ·»åŠ åˆ°å®¹å™¨ä¸­æ—¶ï¼Œè¦ä½¿ç”¨è¿™äº”ä¸ªå¸¸é‡ä¹‹ä¸€ï¼Œ
+		 * NORTHè¡¨ç¤ºåŒ—åŒºåŸŸçš„å¸ƒå±€çº¦æŸï¼ŒSOUTHè¡¨ç¤ºå—åŒºåŸŸçš„å¸ƒå±€çº¦æŸ
+		 * EASTè¡¨ç¤ºä¸œåŒºåŸŸçš„å¸ƒå±€çº¦æŸï¼ŒWESTè¡¨ç¤ºè¥¿åŒºåŸŸçš„å¸ƒå±€çº¦æŸï¼ŒCENTERè¡¨ç¤ºä¸­å¤®åŒºåŸŸçš„å¸ƒå±€çº¦æŸ
 		 */
 		con.add(jsPane,BorderLayout.CENTER);
 		con.add(jpanel,BorderLayout.SOUTH);
-		//ÉèÖÃ´°ÌåÊôĞÔ
+		//è®¾ç½®çª—ä½“å±æ€§
 		mainjframe.setSize(500,700);
 		mainjframe.setVisible(true);
 		mainjframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		try {
-			//ÓÃipµØÖ·ºÍ¶Ë¿ÚºÅ´´½¨Ò»¸öÌ×½Ó×Ösocket
+			//ç”¨ipåœ°å€å’Œç«¯å£å·åˆ›å»ºä¸€ä¸ªå¥—æ¥å­—socket
 			socket=new Socket("localhost",8080);
-			//»ñÈ¡socketµÄÊäÈë¡¢Êä³öÁ÷
+			//è·å–socketçš„è¾“å…¥ã€è¾“å‡ºæµ
 			outstream=new DataOutputStream(socket.getOutputStream());
 			instream=new DataInputStream(socket.getInputStream());
-			//½«¸ø¶¨µÄÎÄ±¾Ìí¼Óµ½ÎÄµµµÄºóÃæ
-			showText.append("Á¬½Ó³É¹¦£¬ÇëËµ»°\n");
-			//´´½¨Ò»¸öÏß³Ì
+			//å°†ç»™å®šçš„æ–‡æœ¬æ·»åŠ åˆ°æ–‡æ¡£çš„åé¢
+			showText.append("è¿æ¥æˆåŠŸï¼Œè¯·è¯´è¯\n");
+			//åˆ›å»ºä¸€ä¸ªçº¿ç¨‹
 			thread=new Thread(this);
-			//ÉèÖÃÏß³ÌµÄÓÅÏÈ¼¶
+			//è®¾ç½®çº¿ç¨‹çš„ä¼˜å…ˆçº§
 			thread.setPriority(Thread.MIN_PRIORITY);
-			//Æô¶¯Ïß³Ì
+			//å¯åŠ¨çº¿ç¨‹
 			thread.start();
 		} catch (UnknownHostException e) {
-			showText.append("¶Ô²»Æğ£¬Ã»ÓĞÁ¬½Óµ½·şÎñÆ÷\n");
+			showText.append("å¯¹ä¸èµ·ï¼Œæ²¡æœ‰è¿æ¥åˆ°æœåŠ¡å™¨\n");
 			/*
-			 * ÊäÈëÎÄ±¾¿ò²»¿ÉÊ¹ÓÃ
-			 * ¼´£¬×é¼ş²»ÄÜ½øĞĞÈÎºÎ²Ù×÷£¬
-			 * ²ÎÊıÎªtrue(¿ÉÓÃ)»òfalse(²»¿ÉÓÃ)
+			 * è¾“å…¥æ–‡æœ¬æ¡†ä¸å¯ä½¿ç”¨
+			 * å³ï¼Œç»„ä»¶ä¸èƒ½è¿›è¡Œä»»ä½•æ“ä½œï¼Œ
+			 * å‚æ•°ä¸ºtrue(å¯ç”¨)æˆ–false(ä¸å¯ç”¨)
 			 */
 			inText.setEditable(false);
-			//Í¬ÉÏ
+			//åŒä¸Š
 			sendbtn.setEnabled(false);
+		        System.out.println("B");
 		} catch (IOException e) {
-			showText.append("¶Ô²»Æğ£¬Ã»ÓĞÁ¬½Óµ½·şÎñÆ÷\n");
+			showText.append("å¯¹ä¸èµ·ï¼Œæ²¡æœ‰è¿æ¥åˆ°æœåŠ¡å™¨\n");
 			inText.setEditable(false);
 			sendbtn.setEnabled(false);			}
 	}
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		//»ñÈ¡ÎÄ±¾ÊäÈë¿òµÄÄÚÈİ
+		//è·å–æ–‡æœ¬è¾“å…¥æ¡†çš„å†…å®¹
 		String text=inText.getText();
 		if(text.length()>0){
 			try {
-				//ÒÔÓë»úÆ÷ÎŞ¹Ø·½Ê½Ê¹ÓÃ UTF-8 ĞŞ¸Ä°æ±àÂë½«Ò»¸ö×Ö·û´®Ğ´Èë»ù´¡Êä³öÁ÷
+				//ä»¥ä¸æœºå™¨æ— å…³æ–¹å¼ä½¿ç”¨ UTF-8 ä¿®æ”¹ç‰ˆç¼–ç å°†ä¸€ä¸ªå­—ç¬¦ä¸²å†™å…¥åŸºç¡€è¾“å‡ºæµ
 				outstream.writeUTF(text);
-				//Çå¿Õ´ËÊı¾İÊä³öÁ÷¡£ÕâÆÈÊ¹ËùÓĞ»º³åµÄÊä³ö×Ö½Ú±»Ğ´³öµ½Á÷ÖĞ
+				//æ¸…ç©ºæ­¤æ•°æ®è¾“å‡ºæµã€‚è¿™è¿«ä½¿æ‰€æœ‰ç¼“å†²çš„è¾“å‡ºå­—èŠ‚è¢«å†™å‡ºåˆ°æµä¸­
 				outstream.flush();
-				//ÔÚÎÄµµÖĞ×·¼ÓÊäÈë¿òµÄÄÚÈİ
-				showText.append("¿Í»§¶Ë "+inText.getText()+"\n");
-				//Çå¿ÕÊäÈë¿òµÄÄÚÈİ
+				//åœ¨æ–‡æ¡£ä¸­è¿½åŠ è¾“å…¥æ¡†çš„å†…å®¹
+				showText.append("å®¢æˆ·ç«¯ "+inText.getText()+"\n");
+				//æ¸…ç©ºè¾“å…¥æ¡†çš„å†…å®¹
 				inText.setText(null);
 			} catch (IOException e1) {
-				showText.append("ÄãµÄÏûÏ¢"+inText.getText()+"Î´ÄÜ·¢ËÍ"+"\n");
+				showText.append("ä½ çš„æ¶ˆæ¯"+inText.getText()+"æœªèƒ½å‘é€"+"\n");
 			}
 		}
 
@@ -144,7 +145,7 @@ public class client implements ActionListener,Runnable {
 	public void run() {
 		while(true){
 			try {
-				showText.append("¶Ô·½Ëµ "+instream.readUTF()+"\n");
+				showText.append("å¯¹æ–¹è¯´ "+instream.readUTF()+"\n");
 				Thread.sleep(2000);
 			} catch (IOException e) {
 				e.printStackTrace();
